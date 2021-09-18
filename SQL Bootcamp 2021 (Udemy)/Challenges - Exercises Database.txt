@@ -1,0 +1,122 @@
+
+* NOTE: This database has 2 schemas (cd and public) so to reference tables in either, use the name as a prefix (cd.table, public.table)
+
+-----
+
+Q: How can you retrieve all the information from the cd.facilities table?
+A: SELECT * FROM cd.facilities;
+
+-----
+
+Q: How would you retrieve a list of only facility names and costs to member?
+A: SELECT name, membercost FROM cd.facilities;
+
+-----
+
+Q: How can you produce a list of facilities that charge a fee to members?
+A: SELECT name, membercost FROM cd.facilities WHERE membercost > 0;
+
+-----
+
+Q: Produce a list of facilities that chareg a fee to members where the fee is less than 1/50th of the monthly maintenance
+A: SELECT name, membercost FROM cd.facilities WHERE membercost > 0 AND membercost< monthlymaintenance/50;
+
+-----
+
+Q: Produce a list of all facilities with 'Tennis' in their names
+A: SELECT * FROM cd.facilities WHERE name LIKE '%Tennis%';
+
+-----
+
+Q: Retrieve the details of facilities with ID 1 and 5? (Do without using the OR operator)
+A: SELECT * FROM cd.facilities WHERE facid IN (1,5);
+
+-----
+
+Q: Produce a list of members who joined after the start of Sepetember 2012 (memid, surname, firstname and joindate)
+A: 
+
+SELECT memid, surname, firstname, joindate
+FROM cd.members
+WHERE joindate > '2012-09-01';
+
+-----
+
+Q: Produce an ordered list of the first 10 surnames in the members table (no duplicates)
+A: 
+
+SELECT DISTINCT(surname) 
+FROM cd.members
+ORDER BY surname ASC LIMIT 10;
+
+-----
+
+Q: Get the signup date for your last member (most recently joined)
+A:
+
+SELECT joindate 
+FROM cd.members
+ORDER BY joindate DESC LIMIT 1;
+
+-----
+
+Q: How many facilities have a cost to guests of 10 or more?
+A: 
+
+SELECT COUNT(*) 
+FROM cd.facilities
+WHERE guestcost >= 10;
+
+-----
+
+Q: Get a list of the total number of slots booked per facility in the month of September 2012 (get facility ID and slots, sort by slots)
+A:
+
+SELECT facid, SUM(slots)
+FROM cd.bookings
+WHERE EXTRACT(MONTH FROM starttime) = 9 AND EXTRACT(YEAR FROM starttime) = 2012
+GROUP BY facid
+ORDER BY SUM(slots) ASC;
+
+-----
+
+Q: Get a list of facilities with more than 1000 slots booked (facility IDs and slots, sorted by facility ID)
+A: 
+
+SELECT facid, SUM(slots)
+FROM cd.bookings
+GROUP BY facid
+HAVING SUM(slots) > 1000
+ORDER BY facid ASC;
+
+-----
+
+Q: Get a list of start times for bookings in tennis courts for the date '2012-09-21' (starttime and facility pairs, ordered by starttime)
+A: 
+
+SELECT b.starttime, f.name
+FROM cd.bookings AS b
+INNER JOIN cd.facilities as f
+ON f.facid = b.facid
+WHERE TO_CHAR(b.starttime, 'yyyy-mm-dd') = '2012-09-21' AND f.name LIKE '%Tennis Court%'
+ORDER BY b.starttime;
+
+-----
+
+Q: Get a list of starttimes for bookings by memebers named 'David Farrell'
+A: 
+
+SELECT b.starttime, m.firstname, m.surname
+FROM cd.bookings AS b
+INNER JOIN cd.members as m
+ON m.memid = b.memid
+WHERE m.firstname || ' ' || m.surname = 'David Farrell';
+
+
+<< END OF EXERCISES FOR THE EXERCISES DATABASE >>
+
+
+
+
+
+
