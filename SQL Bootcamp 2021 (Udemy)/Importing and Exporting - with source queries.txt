@@ -1,0 +1,22 @@
+
+* Importing and Exporting functionalities for .csv files into tables and from tables respectively
+	>> Not all files are compatible (formatting, data types, macros, etc...) - some transformation/edits may be required
+	>> Importing DOES NOT create a table - it assumes a table already exists and is properly formatted for the file 
+
+-----
+
+* We are operating in myFirstDB for testing
+
+:: Create a table that is formatted for the file we are importing (basic_file_to_import.csv)
+
+CREATE TABLE simple(
+	a INTEGER,
+	b INTEGER,
+	c INTEGER
+);
+
+:: After using the graphical interface to import the file, check the correct columns, set the header and delimiter - we check it
+
+SELECT * FROM simple;
+
+:: You can then export using the grpahical interface (very easy)
