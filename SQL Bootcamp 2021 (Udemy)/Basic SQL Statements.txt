@@ -1,0 +1,50 @@
+
+> SELECT: Used for retrieving data from a table
+	$ SELECT column_name FROM table_name;
+	$ SELECT c1, c2 FROM t;
+
+> DISTINCT: Used to extract only unique values from a column (no duplicates)
+	$ SELECT DISTINCT c FROM t;
+	$ SELECT DISTINCT(c) FROM t; 			-- You can use () like a function call
+
+> COUNT: Used to get the number of rows that match a condition - usualy used with other commands
+	$ SELECT COUNT(c) FROM t; 				-- gives total number of rows
+	$ SELECT COUNT(DISTINCT c) FROM t;		-- gives number of rows that are unique
+
+> WHERE: Used to specify conditions on rows when selecting
+	$ SELECT c FROM t WHERE conditions;				-- Comparisions (<>=!), AND/OR/NOT, IN, REGEX, etc...
+	$ SELECT c1, c2, c3 WHERE conditions;	
+	$ SELECT COUNT c FROM t WHERE conditions; 		-- Gets the number of rows matching the conditions
+
+> ORDER BY: Used to sort rows on a column value (and go ASC or DESC)
+	$ SELECT c1, c2 FROM t ORDER BY c1 ASC;
+	$ SELECT c1, c2, c3 FROM t ORDER BY c3 DESC;
+	$ SELECT c1, c2 FROM t ORDER BY c1, c2;		-- This will sort by c1, then by c2 (you can also add ASC/DESC seperately)
+
+> LIMIT: Used to set how many rows are returned (Most useful when sorting - "get the top 5", etc...) - goes at the very end
+	$ SELECT c FROM t LIMIT 5;
+	$ SELECT c1, c2 FROM t ORDER BY c1 ASC LIMIT 10;
+
+> BETWEEN: Used to match a value against a range of values (a <= x <= b) - This also works for dates (as strings)
+	$ SELECT c FROM t WHERE c BETWEEN num1 AND num2;
+	$ SELECT c1, c2 FROM t where c1 BETWEEN num1 AND num2 AND c2 NOT BETWEEN num3 and num4; -- Use NOT to denote values outisde range
+
+> IN: Used to match row values within a list of multiple options
+	$ SELECT c FROM t where c in ('value1', 'value2', 'value3');
+	$ SELECT c1, c2 FROM t WHERE NOT c2 in (1, 3, 6, 7, 100);
+
+> LIKE and ILIKE: Used for conditional string mathcing (starting/ending strings, partial matches, etc...) -- can be combined (AND/OR/NOT)
+	>> Uses wildcard characters (only 2 shown):
+		% = Matched any sequence of characters
+		_ = Matches any single character
+
+	$ SELECT c FROM t WHERE c LIKE 'A%'; 				-- All values that begin with 'A'
+	$ SELECT c FROM t WHERE c LIKE '%a'; 				-- All values that end with 'a'
+	$ SELECT c FROM t WHERE c LIKE '%er%';				-- All values with 'er' somewhere 
+	$ SELECT c FROM t WHERE c LIKE 'A string of _'; 	-- All values that end with a single value and start with 'A string of '
+	$ SELECT c FROM t WHERE c LIKE 'A string of __'; 	-- Using multiple _ means multiple single characters
+	$ SELECT c FROM t WHERE c LIKE '_iddle%'; 			-- Allows for partial (pattern) matching -- here we want values that include 'iddle'
+
+	>> Full REGEX (Regular Expression) is supported
+
+
