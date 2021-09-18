@@ -1,0 +1,79 @@
+
+* PostgreSQL can hold date/time information as such:
+	>> TIME 		-- Contains only time 
+	>> DATE 		-- Contains only date
+	>> TIMESTAMP	-- Contains date and time
+	>> TIMESTAMPTZ	-- Contains date, time and timezone
+
+> SHOW: (Also used with ALL) This will display the values of runtime parameters 
+	$ SHOW ALL;
+	$ SHOW TIMEZONE: -- Shows current system timezone
+
+> NOW(): Used to get the timestamp information at this moment - as a timestamp formatted object
+	$ SELECT NOW();
+
+> TIMEOFDAY(): Similar to NOW() but returns the value as a string of characters (text)
+	$ SELECT TIMEOFDAY()
+
+	>> Use CURRENT_TIME to get only the time
+		$ SELECT CURRENT_TIME
+
+	>> USE CURRENT_DATE to get only the date
+		$ SELECT CURRENT_DATE
+
+> EXTRACT(): Used to pull out a sub-component of a date value
+	>> YEAR, MONTH, DAY, WEEK, QUARTER
+	$ EXTRACT(YEAR FROM date_column)
+
+> AGE(): Used to calculate the current age of a timestamp (time passed since stamped)
+	$ AGE(date_column)
+
+> TO_CHAR(): Used to convert data types to text (strings) - useful for timestamp formatting -- many ways to format (see documentation)
+	$ TO_CHAR(date_column, 'mm-dd-yyyy')
+
+-----
+
+* There are many mathmatical operators and functions available in SQL (see online documentation for full list with usages)
+	>> We can perform operations on columns and get calculation results
+
+	$ SELECT c1/c2 FROM t
+	$ SELECT (c1+c2)/(c3*c4) FROM t
+	$ SELECT abs(c) FROM t 							-- Absolute value function (many more)
+	$ SELECT ROUND(c1/c2, 4)*100 AS percent FROM t 	-- Using AS to create an alias for the new calculation results
+
+-----
+
+* There are many string functions that provide a variety of ways to edit, combine and alter text data columns
+
+	$ 
+	SELECT upper(c1) || ' ' || upper(c2)  	-- Make first letter capitalized
+	FROM t
+	AS combined_test			 			-- Combine the values from c1 and c2 with a space between them
+
+	$ SELECT LOWER(LEFT(c,1)) FROM t  		-- Use LEFT (or RIGHT) to select a character x number of places from the left (or right)
+
+-----
+
+* SubQuery: Used to inject queries into other queries (i.e. find students who had a grade larger than the average test score)
+
+	$
+	SELECT student, grade
+	FROM test_scores
+	WHERE grade > (				-- Use parenthesis to wrap a subquery
+		SELECT AVG(grade)		-- A subquery is just a query inside another query
+		FROM test_scores		-- Subqueries run first (similar to recursive calls in a function - start at the bottom, trace back up)
+	)
+
+> EXIST: Used to test for the existence of rows (non-zero records in resulting subquery)
+	>> Run as a function --> EXISTS(subquery)
+
+-----
+
+* Self-joins: Used to compare values in a column of rows within the same table
+	>> Standard JOIN syntax, just using the same table for both parts
+
+	$
+	SELECT t1.c1, t2.c2 
+	FROM t1 AS ta 			-- Must use aliases to not reference tables twice
+	JOIN t1 AS tb
+	ON ta.some_column = tb.another_column
