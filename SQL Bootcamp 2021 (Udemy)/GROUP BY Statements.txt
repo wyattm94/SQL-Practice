@@ -1,0 +1,36 @@
+
+* Aggregation functions allow us to combine data together using some type of functional logic
+	>> There are many aggregation functions but the most common are:
+		AVG() 	-- Average (Use ROUND() to specify precision - wrap arpund the aggregate function)
+		COUNT() -- Number of values
+		MAX() 	-- Max value
+		MIN() 	-- Min value
+		SUM()	-- Sum of all values
+
+> GROUP BY: Used to aggregate data and apply aggregate functions (from above) -- must directly follow FROM and WHERE statements
+	$ SELECT c1, AGG_FUNCTION(c2) FROM t GROUP BY c1 		 -- aggregates data per catageory of c1
+	$ SELECT c1, c2 SUM(c3) FROM t GROUP BY c1, c2			 -- Any columns being grouped must be in the SELECT statement as well
+	$ SELECT c1, SUM(c2) FROM t GROUP BY c1 ORDER BY SUM(c2) -- To sort by an aggregate function, it must be applied in the ORDER BY
+
+> DATE: Used to convert a timestamp column to a date value
+	$ SELECT DATE(date_column) FROM t GROUP BY DATE(date_column)
+
+> HAVING: Used to filter after the aggregation step
+	>> We can use WHERE to filter before a GROUP BY statement
+	>> We can use HAVING to filter after aggregating some data (filtering the aggregated data)
+
+	$
+	SELECT c1, SUM(c2) 
+	FROM t 
+	WHERE c1 != "something"
+	GROUP BY c1
+	HAVING SUM(c2) > some_value
+
+
+
+
+
+
+
+
+
