@@ -1,0 +1,25 @@
+(PASSWORD = sqlDB*, PORT = 5432) *Using PostGreSQL + pgAdmin 4 (the program, not the windows App)
+In pgAdmin, the password is: jackRabbit*
+
+> SQL = Structured Query Language --> Queries can be used/adapted across different software
+	+ How we communicate with a Database software
+
+> Databases are systems that allow users to store/organize data -- usually large amounts of data
+
+> Benefits:
+	+ Data Integrity
+	+ Handles Large amounts of Data
+	+ Run operations to quickly combine/filter/etc... data 
+	+ Automation of steps
+	+ Supports data for websites and applications
+
+> Programs: PostGreSQL, SQLite (Python Module for this), MySQL/MariaSQL, MS SQL Server Express
+
+> To create a database from a file (.tar)
+	1. Create a DB
+	2. Restore (finds file to load)
+	3. In restore options, set Pre-data, Data and Post-data to True (Yes)
+	4. Refresh the DB
+
+> Access Queries with the "Query Tool" (used to write queries to the DB)
+> Access Tables through "Schemas" --> "Tables" (Where the data is actually represented)
