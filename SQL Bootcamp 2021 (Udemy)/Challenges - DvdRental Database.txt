@@ -1,0 +1,394 @@
+Q: We want to send an email to all customers, what query gets all first/last names and emails?
+A: SELECT first_name, last_name, email FROM customer;
+
+-----
+
+Q: A customer wants to know what ratings we have in the store - how do we find which ones we have?
+A: SELECT DISTINCT rating FROM film;
+
+-----
+
+Q: We need to email a specific customer - how can we find an email for Nancy Thomas?
+A: SELECT email FROM customer WHERE first_name = 'Nancy' AND last_name = 'Thomas'; 
+
+-----
+
+Q: How would give a customer a description for the movie "Outlaw Hanky"?
+A: SELECT description FROM film WHERE title = 'Outlaw Hanky';
+
+-----
+
+Q: We need to call a customer - how can we find the phone number based on their address of "259 Ipoh Drive"?
+A: SELECT phone FROM address WHERE address = '259 Ipoh Drive';
+
+-----
+
+Q: We want to reward our first 10 paying customers - how do we get their IDs?
+A: SELECT first_name, last_name, customer_id FROM payment ORDER BY payment_date ASC LIMIT 10;
+
+-----
+
+Q: A customer wants a short film for lunch - what are the titles from the 5 shortest movies?
+A: SELECT title FROM film ORDER BY length ASC LIMIT 5;
+
+-----
+
+Q: How many movies are there that are 50 minutes or shorter?
+A: SELECT COUNT(title) FROM film WHERE length <= 50;
+
+-----
+
+Q: How many payment transactions were greater than $5.00?
+A: SELECT COUNT(payment_id) FROM payment WHERE amount > 5;
+
+-----
+
+Q: How many actors have a first name that starts with the letter P?
+A: SELECT COUNT(actor_id) FROM actor WHERE first_name LIKE 'P%';
+
+-----
+
+Q: How many unique districts are our customers from?
+A: SELECT COUNT(DISTINCT district) FROM address;
+
+-----
+
+Q: Retrieve the list of names for (of) those distinct districts from the previous question.
+A: SELECT DISTINCT district FROM address;
+
+-----
+
+Q: How many films have a rating of R and a replacement cost between $5 and $15?
+A: SELECT COUNT(*) FROM film WHERE rating = 'R' AND replacement_cost BETWEEN 5 AND 15;
+
+-----
+
+Q: How many films have the word Truman somewhere in the title?
+A: SELECT COUNT(*) FROM film WHERE title LIKE '%Truman%';
+
+-----
+
+Q: Which customers are spending the most money?
+A: SELECT customer_id COUNT(amount) FROM payment GROUP BY customer_id ORDER BY COUNT(amount) DESC;
+
+-----
+
+Q: Find how many payments each staff member handled to award the top member
+A: SELECT staff_id, COUNT(amount) FROM payment GROUP BY staff_id ORDER BY COUNT(amount) DESC;
+
+-----
+
+Q: What is the average replacement cost per MPAA rating?
+A: SELECT rating, ROUND(AVG(replacement_cost), 2) FROM film GROUP BY rating ORDER BY rating ASC; 
+
+-----
+
+Q: What are the customer IDs of the top 5 customers with respect to their total amount spent?
+A: 
+
+SELECT customer_id, SUM(amount) 
+FROM payment 
+GROUP BY customer_id 
+ORDER BY SUM(amount) DESC LIMIT 5;
+
+-----
+
+Q: Customer with 40 or more transactions will get platinum status - who (by ID) is eligible? 
+A: 
+
+SELECT customer_id, COUNT(payment_id) 
+FROM payment 
+GROUP BY customer_id HAVING COUNT(payment_id) >= 40;
+
+-----
+
+Q: What are the customer IDs of those who spent more than $100 in payment transactions to employee with staff_id = 2? 
+A: 
+
+SELECT customer_id, SUM(amount) 
+FROM payment 
+WHERE staff_id = 2 
+GROUP BY customer_id HAVING SUM(amount) > 100;
+
+-----
+
+Q: Which customers (by ID) have spent at least $100 with staff member #2 (ID of 2)?
+A:
+
+SELECT customer_id, SUM(amount) 
+FROM payment 
+WHERE staff_id = 2 
+GROUP BY customer_id 
+HAVING SUM(amount) >= 110; 
+
+-----
+
+Q: How many films begin with the letter 'J'?
+A: SELECT COUNT(film_id) FROM film WHERE title LIKE 'J%'; 
+
+-----
+
+Q: What customer has the highest customer ID number whose name starts with an 'E' and an address ID lower than 500?
+A: 
+
+SELECT customer_id, first_name, last_name 
+FROM customer 
+WHERE first_name LIKE 'E%' AND address_id < 500 
+ORDER BY customer_id DESC LIMIT 1;
+
+-----
+
+Q: Get the payment ID, customer ID and first name of customers using an INNER JOIN
+A: 
+
+SELECT payment_id, payment.customer_id, first_name -- specify customer_id from the payment table
+FROM payment
+INNER JOIN customer
+ON payment.customer_id = customer.customer_id;
+
+-----
+
+Q: Find all customers who never made a transaction (came in but did not buy)
+A:
+
+SELECT * FROM customer
+FULL OUTER JOIN payment
+ON customer.customer_id = payment.customer_id
+WHERE customer.customer_id IS null OR payment.customer_id IS null; -- this will have 0 results (everyone bought stuff)
+
+-----
+
+Q: Find all movies that we have info for but are not located in inventory across any of our stores
+A: 
+
+SELECT film.film_id, title, inventory_id, store_id
+FROM film
+LEFT JOIN inventory
+ON inventory.film_id = film.film_id
+WHERE inventory.film_id is null;
+
+-----
+
+Q: We ned to alert California customers of sales tax changes - what are the emails of customers who live in CA?
+A:
+
+SELECT district, email 							-- Added district to verify accuracy
+FROM customer
+INNER JOIN address
+ON address.address_id = customer.address_id
+WHERE address.district = 'California';
+
+-----
+
+Q: Get a lost of all the movies Nick Wahlberg has been in (HINT: Threading the JOINS)
+A:
+
+SELECT first_name, last_name, title
+FROM film_actor														-- This is the table that connect actor_id and film_id
+INNER JOIN actor
+ON actor.actor_id = film_actor.actor_id
+INNER JOIN film
+ON film.film_id = film_actor.film_id
+WHERE actor.first_name = 'Nick' AND actor.last_name = 'Wahlberg'; 	-- This is the condition for specifically 'Nick Wahlberg'
+
+-----
+
+Q: During which months did payments occur? (Format resutls to show the full month name)
+A:
+
+SELECT DISTINCT(TO_CHAR(payment_date, 'MONTH'))
+FROM payment;
+
+-----
+
+Q: How many payments occurred on a Monday?
+A: 
+
+SELECT COUNT(*) 
+FROM payment
+WHERE EXTRACT(DOW FROM payment_date) = 1; -- DOW is 'Day of Week' (Sunday = 0)
+
+-----
+
+Q: Get a list of films where the rental rate is above average
+A:
+
+SELECT title, rental_rate 
+FROM film
+WHERE rental_rate > (
+	SELECT AVG(rental_rate)
+	FROM film
+);
+
+-----
+
+Q: Get a list of films returned between a set of dates (get their titles)
+A:
+
+SELECT film_id, title 				-- This will get the IDs and titles that are in the list of IDs returned by the subquery
+FROM film
+WHERE film_id in (					-- This subquery threads rental to inventory to film to find the film IDs in the date range
+	SELECT inventory.film_id
+	FROM rental
+	INNER JOIN inventory
+	ON inventory.inventory_id = rental.inventory_id
+	INNER JOIN film
+	ON film.film_id = inventory.film_id
+	WHERE return_date BETWEEN '2005-05-29' AND '2005-05-30' -- This is the date filter
+);
+
+-----
+
+Q: Find customers who have at least 1 payment that is over $11
+A:
+
+SELECT first_name, last_name 
+FROM customer
+WHERE EXISTS (				-- The FROM statement allows customer to be referenced in the subquery
+	SELECT *
+	FROM payment
+	WHERE payment.customer_id = customer.customer_id AND amount > 11
+);
+
+
+-----
+
+Q: What film pairs have the same length?
+A:
+
+SELECT ta.title, ta.length, tb.title 					-- Specify the title from both tables 
+FROM film as ta 										-- Use aliases
+INNER JOIN film as tb
+ON tb.film_id != ta.film_id AND tb.length = ta.length; 	-- Join where the IDs are different but where the lengths are the same
+
+-----
+
+Q: Create a tier ranking list for our customers (rewards program) - General CASE syntax
+A:
+
+SELECT customer_id,
+CASE
+	WHEN (customer_id <= 100) THEN 'Premium'
+	WHEN (customer_id BETWEEN 100 AND 200) THEN 'Plus'
+	ELSE 'Normal'
+END AS customer_class
+FROM customer;
+
+-----
+
+Q: Get a list of 1st, 2nd and rest positions for raffle results - CASE expression syntax
+A:
+
+SELECT customer_id,
+CASE customer_id
+	WHEN 2 THEN 'Winner'
+	WHEN 5 THEN 'Second Place'
+	ELSE 'Did not win'
+END AS raffle_results
+FROM customer;
+
+-----
+
+Q: Let's figure out how many movies are a bargain ($0.99) - many want to do this but we will use CASE
+A:
+
+SELECT						-- NOTE: We are only selecting the SUM so no need to add a GROUP BY statement below
+SUM(						-- Use SUM to add the entire column (put the CASE inside the aggregate function)
+	CASE rental_rate
+		WHEN 0.99 THEN 1
+		ELSE 0
+	END
+) AS number_of_bargains
+FROM film;
+
+-----
+
+Q: Let's extend the previous operation to now encompass multiple tiers of rentals
+A:
+
+SELECT
+SUM(						-- SUM of all bargain priced movies (amount)
+	CASE rental_rate
+		WHEN 0.99 THEN 1
+		ELSE 0
+	END
+) AS bargains,
+SUM(						-- SUM of all regular priced movies
+	CASE rental_rate
+		WHEN 2.99 THEN 1
+		ELSE 0
+	END
+) AS regular,
+SUM( 						-- SUM of all premium priced movies
+	CASE rental_rate
+		WHEN 4.99 THEN 1
+		ELSE 0
+	END
+) AS premium
+FROM film;
+
+-----
+
+Q: We want to know and compare the various films we have per movie rating
+A:
+
+SELECT
+SUM(
+	CASE rating
+		WHEN 'R' THEN 1
+		ELSE 0
+	END
+) AS r,
+SUM(
+	CASE rating
+		WHEN 'PG' THEN 1
+		ELSE 0
+	END
+) AS pg,
+SUM(
+	CASE rating
+		WHEN 'PG-13' THEN 1
+		ELSE 0
+	END
+) AS pg13
+FROM film;
+
+-----
+
+Q: Get the number of digits in the film inventory IDs (CAST to something that can be used by CHAR_LENGTH)
+A:
+
+SELECT CHAR_LENGTH(CAST(inventory_id AS VARCHAR))
+FROM rental
+AS number_of_digits;
+
+-----
+
+Q: Create a VIEW object (stored query)
+A:
+
+CREATE VIEW customer_info AS 				-- Creating the VIEW
+SELECT first_name, last_name, address
+FROM customer
+INNER JOIN address
+ON address.address_id = customer.address_id;
+
+SELECT * FROM customer_info; 				-- Using the VIEW
+
+
+<< END OF CHALLENGES FOR THE DVD DATABASE >>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
