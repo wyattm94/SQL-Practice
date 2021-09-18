@@ -1,0 +1,187 @@
+
+* Data types in SQL:
+	>> Boolean				 : True of False
+	>> Character			 : char, varchar, text
+	>> Numeric				 : integer and floating-point numbers
+	>> Temporal				 : date, time, timestamp, interval
+	>> UUID					 : Universally Unique Identifiers (algorithmically unique codes)
+	>> Array				 : Stores an array of strings, numbers, etc... (multiple values)
+	>> JSON					 : Popular and clean data storage architecture (great for APIs)
+	>> Hstore key-value pair : Like dictionaries in Python
+	>> Special types		 : network address, geometric data, etc... 
+
+	* Data types are important to consider when building tables - how do I best store/represent some kind of data?
+	* Take the time to consider long-term storage - you can always remove historical data but you can't add it
+	* The more data you store, the more complex it may be in the future to move/change/migrate to a new system if you change your mind
+
+-----
+
+* Keys are used to create relationships between tables in SQL
+	>> Keys should be easily unique
+	>> Usually best practice to use integers (1, 2, ..., n) unless you already have a unique algo for this
+	>> These are some of the contraints we can apply to tables when creating them
+
+* Primary Keys (PK): A column(s) used to identify a row uniquely in a table
+
+* Foreign Keys (FK): A column(s) in a table that relate to primary keys of another table
+
+* Constraints: Rules enforced on data columns on a table
+	>> Used to prevent invalid data entries
+	>> Helps ensure accuracy and reliability of the data in the database
+	>> There are 2 main categories of constraints:
+
+		+ Column constraints: Constrains the data to adhere to certain conditions
+		+ Table constraints: Applied to the entire table rather than to an individual column
+
+	>> The most common COLUMN constraints used are:
+
+		+ NOT NULL 			: Ensures a column cannot have NULL values
+		+ UNIQUE 			: Ensures that all values in a column are different
+		+ Primary Key (PK)	: Uniquely IDs each row/record in a DB table
+		+ Foreign Key (FK)	: Constrains data based on columns in other tables
+		+ CHECK 			: Ensures all values in a column satisfy certain conditions
+		+ EXCLUSION			: Ensures if any 2 rows are compared on a specified column using the operator - not all comparisions will be TRUE
+
+	>> The most common TABLE constraints used are:
+
+		+ CHECK (condition)		: Check a condition when inserting or updating data
+		+ REFERENCES			: Constrain the value stored in the column that must exist in a column in another table
+		+ UNIQUE(col_list) 		: Forces values stored in the columns listed inside the parenthesis to be unique
+		+ PRIMARY KEY(col_list) : Allows you to define the PK that consists of multiple columns
+
+-----
+
+> CREATE: Used to create a table
+	
+	$
+	CREATE TABLE table_name (
+		column_name TYPE column_constraint,
+		column_name TYPE column_constraint
+		table_constraint table_constraint
+	) INHERITS existing_table_name;			-- Inherit if needed
+
+	>> Use SERIAL (sequence object) to auto generate integer values for PK
+		+ Does not reformat on removal of data - just deleted the record PK with the record
+
+> INSERT: Used to add rows to a table
+	
+	$
+	INSERT INTO table (column1, column2, ...)
+	VALUES
+		(value1, value2, ....)
+		(value1, value2, ....)
+		etc...
+
+	>> The inserted row values must match up for the table (including constraints)
+	>> SERIAL columns do not need a value (they auto generate)
+
+> UPDATE: Used to change values in columns of a table
+
+	$
+	UPDATE table
+	SET column_name = new_value
+	WHERE column_name = old_value 			-- or IS NULL, or any other conditions (Without WHERE, all rows will be updated)
+
+	>> Here we set a column value based on another column value
+
+	$
+	UPDATE table
+	SET column_name = other_column_name
+
+	>> Here we use another table's values (UPDATE join operation)
+
+	$
+	UPDATE tableA
+	SET original_column = tableB.new_column
+	FROM tableB
+	WHERE tableA.id = tableB.id
+
+	>> Here, we can return the affected rows (so we can see what happened)
+
+	$
+	UPDATE table
+	SET column_name = other_column_name
+	RETURNING column_name, column_name2
+
+> DELETE: Used to remove rows from a table
+	
+	$
+	DELETE FROM table
+	WHERE column_name = some_value
+
+	>> We can delete rows based on their presence in other tables (like a DELETE join operation)
+
+	$
+	DELETE FROM tableA
+	USING tableB
+	WHERE tableA.id = tableB.id
+
+	>> We can delete all rows from a table
+
+	$ DELETE FROM table
+
+	>> You can also use RETURNING here - this will show you what was removed
+
+> ALTER: Used to change an existing table structure
+	>> Adding, Dropping or Renaming columns
+	>> Changing a column's data type
+	>> Set DEFAULT values for a column
+	>> Add CHECK constraints
+	>> Rename a table
+	
+	$ ALTER TABLE table ACTION
+
+	$ ALTER TABLE table ADD COLUMN new_column TYPE
+	$ ALTER TABLE table DROP COLUMN column_name
+	
+	>> Alter Constraints
+
+	$ 
+	ALTER TABLE table_name
+	ALTER COLUMN column_name
+	SET DEFAULT value 			-- DROP NOT NULL, ADD CONSTRAINT constraint_name
+
+> DROP: Used to completely remove a column from a table
+	>> CASCADE is needed to remove columns used in views, triggers or stored procedures
+
+	$
+	ALTER TABLE table_name
+	DROP COLUMN column_name -- add CASCADE to remove all dependencies
+
+	>> Use IF EXISTS to avoid errors by checking to see if the column actually exists before dropping
+
+	$
+	ALTER TABLE table_name
+	DROP COLUMN IF EXISTS column_name
+
+	>> Drop multiple columns
+
+	$
+	ALTER TABLE table_name
+	DROP COLUMN column_1
+	DROP COLUMN column_2
+
+> CHECK: Allows the creation of more customized constraints that adhere to certain conditions
+	>> Example: Making sure all values fall below a certain threshold
+
+	$
+	CREATE TABLE example(
+		ex_id SERIAL PRIMARY KEY,
+		age SMALLINT CHECK (age > 21),					-- CHECK conditions are basically parameters for the CHECK function
+		parent_age SMALLINT CHECK (parent_age > age)
+	);
+
+
+
+
+	
+
+
+
+
+
+
+	
+
+
+
