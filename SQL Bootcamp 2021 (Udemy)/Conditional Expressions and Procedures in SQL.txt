@@ -1,0 +1,89 @@
+
+> CASE: Used to execute SQL code when certain conditions are met (Similar to IF/ELSE structures)'
+	>> There are general CASEs and CASE expressions
+
+	>> General CASE syntax
+
+	$
+	WHEN condition1 THEN result1
+	WHEN condition2 THEN result2
+	ELSE some_other_result
+
+	>> Imagine a table with 1 column 'a' and 2 rows with values 1 and 2 - now we use CASE to create a new column with 'one' and 'two' values
+
+	$
+	SELECT a,
+	CASE 	WHEN a = 1 THEN 'one'
+			WHEN a = 2 THEN 'two'
+	ELSE 'other' AS label			-- Use AS to create an alias name for the new column
+	END
+	FROM test; 						-- The table is called test 
+
+	>> CASE Expression Syntax
+
+	$
+	WHEN value1 THEN result1		-- The subtle difference is we only need to have the value instead of the full condition
+	WHEN value2 THEN result2
+	ELSE some_other_result
+
+> COALESCE: A function that takes unlimited arguments and returs the first argument that is not null - if all are null then it returns null
+	>> This is useful when querying a table that contains NULL values and substituting it with another value
+	
+	$ COALESCE(arg1, arg2, ..., argN)
+	$ COALESCE(1,2)						-- returns 1
+	$ COALESCE(NULL,2,3)				-- returns 2
+
+	>> Example where we need to apply discounts but in some rows discounts are NULL - instead of getting a NULL result, we can sub in a 0
+
+	$ SELECT item, (price - COALESCE(discount, 0)) AS final FROM table
+
+> CAST: Allows casting types from 1 to another (type casting) - not all data types are compatible 
+	
+	$ SELECT CAST('5' AS INTEGER)
+	$ SELECT CAST(column AS TIMESTAMP) FROM table
+
+> NULLIF: A function that takes in 2 inputs and returns NULL if both are equal, otherwise it returns the first value
+	>> Useful where NULL values can cause errors or unwanted results
+	>> Example: Dividing by 0 is a major error - using NULLIF can have a result become NULL instead of an error 
+
+	$ NULLIF(arg1, arg2)
+	$ NULLIF(10,10)			-- Returns NULL
+
+> VIEWS: Used to create the ability to quickly see a query with a simple call (like a function)
+	>> A VIEW is a database object which is basically a stored query
+	>> They can be accessed via virtual tables
+	>> It only stores the query (not any physical data or results)
+	>> Existing views can be altered and updated
+
+	$ CREATE VIEW view_name AS <query goes here>
+
+	>> To update a view, we use CREATE OR UPDATE
+
+	$ CREATE OR UPDATE VIEW view_name AS <altered query goes here>
+
+	>> Use DROP to remove a view
+
+	$ DROP VIEW view_name
+	$ DROP VIEW IF EXISTS view_name 	-- IF EXISTS helps avoid errors if the view does not exist
+
+	>> To change the name of a view
+
+	$ ALTER VIEW view_name RENAME TO new_view_name
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
