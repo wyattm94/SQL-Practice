@@ -1,0 +1,44 @@
+
+:: CREATE the students table
+
+CREATE TABLE students(
+	student_id SERIAL PRIMARY KEY,
+	first_name VARCHAR(50) NOT NULL,
+	last_name VARCHAR(50) NOT NULL,
+	phone VARCHAR(25) UNIQUE NOT NULL,
+	email VARCHAR(100) UNIQUE,
+	homeroom_number INTEGER NOT NULL,
+	graduation_year INTEGER
+);
+
+:: CREATE the teachers table
+
+CREATE TABLE teachers(
+	teahcer_id SERIAL PRIMARY KEY,
+	first_name VARCHAR(50) NOT NULL,
+	last_name VARCHAR(50) NOT NULL,
+	phone VARCHAR(25) UNIQUE NOT NULL,
+	email VARCHAR(100) UNIQUE NOT NULL,
+	department VARCHAR(200) NOT NULL,
+	homeroom_number INTEGER NOT NULL
+);
+
+:: INSERT a student into the respective table
+
+INSERT INTO students(first_name, last_name, phone, homeroom_number, graduation_year)
+VALUES
+	('Mark', 'Watney', '777-555-1234', 5, 2035);
+
+:: Confirm changes
+
+SELECT * FROM students;
+
+:: INSERT a teacher into the respective table
+
+INSERT INTO teachers(first_name, last_name, phone, email, department, homeroom_number)
+VALUES
+	('Jonas', 'Salk', '777-555-4321', 'jsalk@school.org', 'Biology', 5);
+
+:: Confirm changes
+
+SELECT * FROM teachers;
